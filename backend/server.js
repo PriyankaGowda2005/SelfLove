@@ -17,7 +17,7 @@ const app = express();
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' ? 'https://yourfrontenddomain.com' : 'http://localhost:3000',
+  origin: process.env.NODE_ENV === 'production' ? 'https://yourfrontenddomain.com' : ['http://localhost:3000', 'http://localhost:5173'],
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));

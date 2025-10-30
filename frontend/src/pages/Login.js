@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, EyeOff, Target, Mail, Lock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -14,7 +15,12 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(formData.email, formData.password);
+    try {
+      await login(formData.email, formData.password);
+      toast.success('Welcome back!');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Login failed');
+    }
   };
 
   const handleChange = (e) => {
@@ -57,7 +63,8 @@ const Login = () => {
                   type="email"
                   autoComplete="email"
                   required
-                  className="input pl-10"
+                  className="input"
+                  style={{ paddingLeft: '3rem' }}
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={handleChange}
@@ -79,7 +86,8 @@ const Login = () => {
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
                   required
-                  className="input pl-10 pr-10"
+                  className="input"
+                  style={{ paddingLeft: '3rem', paddingRight: '2.5rem' }}
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={handleChange}

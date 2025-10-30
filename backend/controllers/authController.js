@@ -6,8 +6,8 @@ const User = require('../models/User');
 
 // Generate JWT Token
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE
+  return jwt.sign({ id }, process.env.JWT_SECRET || 'fallback_secret_key', {
+    expiresIn: process.env.JWT_EXPIRE || '30d'
   });
 };
 
@@ -16,16 +16,16 @@ const generateToken = (id) => {
 // @access  Public
 const register = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
+    console.log('Register request body:', req.body);
+    
+    const { username, email, password } = req.body;
+
+    if (!username || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Validation errors',
-        errors: errors.array()
+        message: 'Username, email, and password are required'
       });
     }
-
-    const { username, email, password } = req.body;
 
     // Check if user exists
     const userExists = await User.findOne({ 
@@ -65,7 +65,7 @@ const register = async (req, res) => {
     console.error('Register error:', error);
     res.status(500).json({
       success: false,
-      message: 'Server error'
+      message: error.message || 'Server error'
     });
   }
 };

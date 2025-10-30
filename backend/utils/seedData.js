@@ -11,7 +11,14 @@ dotenv.config();
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://priyanka636192:Priyanka@cluster0.hqrqzgl.mongodb.net/SelfLove';
+    
+    // Ensure we're connecting to the SelfLove database
+    const finalURI = mongoURI.includes('srp-crm') 
+      ? mongoURI.replace('srp-crm', 'SelfLove')
+      : mongoURI;
+    
+    await mongoose.connect(finalURI);
     console.log('MongoDB Connected for seeding');
   } catch (error) {
     console.error('Database connection error:', error);

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, EyeOff, Target, Mail, Lock, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -28,7 +29,12 @@ const Register = () => {
       return;
     }
 
-    await register(formData.username, formData.email, formData.password);
+    try {
+      await register(formData.username, formData.email, formData.password);
+      toast.success('Account created successfully!');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Registration failed');
+    }
   };
 
   const handleChange = (e) => {
@@ -71,7 +77,8 @@ const Register = () => {
                   type="text"
                   autoComplete="username"
                   required
-                  className="input pl-10"
+                  className="input"
+                  style={{ paddingLeft: '3rem' }}
                   placeholder="Choose a username"
                   value={formData.username}
                   onChange={handleChange}
@@ -93,7 +100,8 @@ const Register = () => {
                   type="email"
                   autoComplete="email"
                   required
-                  className="input pl-10"
+                  className="input"
+                  style={{ paddingLeft: '3rem' }}
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={handleChange}
@@ -115,7 +123,8 @@ const Register = () => {
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="new-password"
                   required
-                  className="input pl-10 pr-10"
+                  className="input"
+                  style={{ paddingLeft: '3rem', paddingRight: '2.5rem' }}
                   placeholder="Create a password"
                   value={formData.password}
                   onChange={handleChange}
@@ -148,7 +157,8 @@ const Register = () => {
                   type={showConfirmPassword ? 'text' : 'password'}
                   autoComplete="new-password"
                   required
-                  className="input pl-10 pr-10"
+                  className="input"
+                  style={{ paddingLeft: '3rem', paddingRight: '2.5rem' }}
                   placeholder="Confirm your password"
                   value={formData.confirmPassword}
                   onChange={handleChange}

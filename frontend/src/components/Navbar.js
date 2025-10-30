@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import { 
   Target, 
   CheckSquare, 
@@ -16,6 +17,7 @@ import {
 } from 'lucide-react'
 
 const Navbar = () => {
+  const { user, logout } = useAuth()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
   const location = useLocation()
@@ -77,10 +79,12 @@ const Navbar = () => {
           <div className="flex items-center space-x-4">
             
             {/* Points Display */}
-            <div className="hidden sm:flex items-center space-x-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full">
-              <Star className="w-4 h-4" />
-              <span className="font-medium">1,250</span>
-            </div>
+            {user && (
+              <div className="hidden sm:flex items-center space-x-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full">
+                <Star className="w-4 h-4" />
+                <span className="font-medium">{user.points || 0}</span>
+              </div>
+            )}
 
             {/* Dark Mode Toggle */}
             <button
@@ -91,12 +95,37 @@ const Navbar = () => {
             </button>
 
             {/* User Menu */}
-            <div className="hidden sm:flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                <User className="w-4 h-4 text-white" />
+            {user ? (
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <User className="w-4 h-4 text-white" />
+                </div>
+                <span className="hidden sm:block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {user.username}
+                </span>
+                <button
+                  onClick={logout}
+                  className="p-2 rounded-lg bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-800 transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
               </div>
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Alex</span>
-            </div>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Link
+                  to="/login"
+                  className="px-4 py-2 text-purple-500 hover:text-purple-600 font-medium transition-colors"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all"
+                >
+                  Register
+                </Link>
+              </div>
+            )}
 
             {/* Mobile Menu Button */}
             <button
@@ -132,14 +161,46 @@ const Navbar = () => {
                 )
               })}
               
-              {/* Mobile Points Display */}
-              <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-lg mx-2">
-                <div className="flex items-center space-x-2">
-                  <Star className="w-4 h-4" />
-                  <span className="font-medium">1,250 Points</span>
+              {user ? (
+                <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                        <User className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {user.username}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        logout()
+                        setIsMenuOpen(false)
+                      }}
+                      className="p-2 rounded-lg bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-800 transition-colors"
+                    >
+                      <LogOut className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
-                <div className="text-sm opacity-90">Level 5</div>
-              </div>
+              ) : (
+                <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 space-y-2">
+                  <Link
+                    to="/login"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block w-full px-4 py-2 text-center text-purple-500 hover:text-purple-600 font-medium transition-colors"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/register"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block w-full px-4 py-2 text-center bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all"
+                  >
+                    Register
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         )}
